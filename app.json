@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "tanda-app",
+    "slug": "tanda-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "tandaapp",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Aplikasi TANDA membutuhkan lokasi Anda untuk menampilkan peta dan titik kejadian darurat.",
+        "NSCameraUsageDescription": "Aplikasi TANDA memerlukan akses kamera untuk mengambil gambar kejadian.",
+        "NSPhotoLibraryUsageDescription": "Aplikasi TANDA memerlukan akses galeri untuk melampirkan gambar laporan."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.yourname.tandaapp",
+      "versionCode": 1,
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Aplikasi ini memerlukan lokasi untuk menampilkan titik darurat komunitas."
+        }
+      ],
+      "expo-image-picker"
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
