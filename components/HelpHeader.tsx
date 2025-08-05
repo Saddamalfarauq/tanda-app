@@ -3,13 +3,11 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
-const helpStats = [
-  { label: 'Butuh Bantuan', value: 7, color: '#3B82F6' },
-  { label: 'Siap Membantu', value: 23, color: '#22C55E' },
-  { label: 'Selesai Hari Ini', value: 15, color: '#F59E42' },
-];
+interface HelpHeaderProps {
+  helpStats: { label: string; value: number; color: string }[];
+}
 
-export default function HelpHeader() {
+export default function HelpHeader({ helpStats }: HelpHeaderProps) {
   const router = useRouter();
 
   return (

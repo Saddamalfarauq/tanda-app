@@ -1,5 +1,10 @@
 // File: app/(tabs)/help.tsx
 
+import { useEffect, useState } from 'react';
+import { Modal, ScrollView, StyleSheet } from 'react-native';
+import { collection, addDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/firebase/config';
+import { COLLECTIONS } from '@/firebase/broadcastSchema';
 
 import HelpActions from '@/components/HelpActions';
 import HelpFilter from '@/components/HelpFilter';
@@ -7,62 +12,6 @@ import HelpHeader from '@/components/HelpHeader';
 import HelpList, { HelpRequest } from '@/components/HelpList';
 import OfferHelpForm from '@/components/OfferHelpForm';
 import RequestHelpForm from '@/components/RequestHelpForm';
-import { useState } from 'react';
-import { Modal, ScrollView, StyleSheet } from 'react-native';
-
-const helpRequestsData: HelpRequest[] = [
-  {
-    id: 1,
-    title: 'Butuh Makanan untuk Keluarga',
-    status: 'Menunggu',
-    statusColor: '#2563EB',
-    family: 'Keluarga Sari',
-    people: '4 orang',
-    address: 'Jl. Mawar No. 15',
-    desc: 'Kehabisan bahan makanan karena banjir. Butuh beras, mie instan, dan makanan kaleng untuk 4 orang selama 3 hari.',
-    type: 'Makanan & Minuman',
-    priority: 'Tinggi',
-    distance: '0.5 km',
-    time: '30 menit lalu',
-    likes: 8,
-    activity: 'Baru',
-    activityColor: '#FECACA',
-  },
-  {
-    id: 2,
-    title: 'Bantuan Evakuasi Lansia',
-    status: 'Terjawab',
-    statusColor: '#22C55E',
-    family: 'Pak Budi',
-    people: '',
-    address: 'Jl. Melati No. 8',
-    desc: 'Butuh bantuan untuk evakuasi ibu saya (75 tahun) yang sulit berjalan. Rumah mulai terendam banjir.',
-    type: 'Evakuasi',
-    priority: 'Tinggi',
-    distance: '1.2 km',
-    time: '45 menit lalu',
-    likes: 0,
-    activity: 'Selesai',
-    activityColor: '#BBF7D0',
-  },
-  {
-    id: 3,
-    title: 'Obat-obatan untuk Diabetes',
-    status: 'Menunggu',
-    statusColor: '#F59E42',
-    family: 'Ibu Ani',
-    people: '',
-    address: 'Jl. Anggrek No. 22',
-    desc: 'Obat diabetes habis dan apotek tutup karena banjir. Butuh insulin dan metformin untuk 3 hari.',
-    type: 'Obat-obatan',
-    priority: 'Sedang',
-    distance: '2.1 km',
-    time: '1 jam lalu',
-    likes: 0,
-    activity: 'Aktif',
-    activityColor: '#FDE68A',
-  },
-];
 
 const categories = [
   { key: 'makanan', label: 'Makanan', icon: '🍽' },
@@ -81,17 +30,33 @@ const urgencies = [
 ];
 
 export default function HelpScreen() {
-  const [helpRequests, setHelpRequests] = useState<HelpRequest[]>(helpRequestsData);
+  const [helpRequests, setHelpRequests] = useState<HelpRequest[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [showOfferForm, setShowOfferForm] = useState(false);
 
-  const handleRequestSubmit = (form: any) => {
-    const newId = helpRequests.length ? helpRequests[helpRequests.length - 1].id + 1 : 1;
-    setHelpRequests([
-      ...helpRequests,
-      {
-        id: newId,
+  useEffect(() => {
+    const broadcastsCol = collection(db, COLLECTIONS.BROADCASTS);
+    const unsubscribe = onSnapshot(broadcastsCol, (snapshot) => {
+      const requests = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as HelpRequest));
+      setHelpRequests(requests);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const helpStats = [
+    { label: 'Butuh Bantuan', value: helpRequests.filter(req => req.status === 'Menunggu').length, color: '#3B82F6' },
+    { label: 'Siap Membantu', value: helpRequests.filter(req => req.status === 'Terjawab').length, color: '#22C55E' },
+    { label: 'Selesai Hari Ini', value: helpRequests.filter(req => req.activity === 'Selesai').length, color: '#F59E42' },
+  ];
+
+  const handleRequestSubmit = async (form: any) => {
+    try {
+      await addDoc(collection(db, COLLECTIONS.BROADCASTS), {
         title: form.title,
         status: 'Menunggu',
         statusColor: '#2563EB',
@@ -102,22 +67,22 @@ export default function HelpScreen() {
         type: categories.find(c => c.key === form.category)?.label || form.category,
         priority: urgencies.find(u => u.key === form.urgency)?.label?.includes('Tinggi') ? 'Tinggi' : (urgencies.find(u => u.key === form.urgency)?.label?.includes('Sedang') ? 'Sedang' : 'Rendah'),
         distance: '0 km',
-        time: 'Baru saja',
+        time: new Date().toISOString(),
         likes: 0,
         activity: 'Baru',
         activityColor: '#FECACA',
         contact: form.contact,
-      } as HelpRequest
-    ]);
-    setShowRequestForm(false);
+        createdAt: new Date(),
+      });
+      setShowRequestForm(false);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
-  const handleOfferSubmit = (form: any) => {
-    const newId = helpRequests.length ? helpRequests[helpRequests.length - 1].id + 1 : 1;
-    setHelpRequests([
-      ...helpRequests,
-      {
-        id: newId,
+  const handleOfferSubmit = async (form: any) => {
+    try {
+      await addDoc(collection(db, COLLECTIONS.BROADCASTS), {
         title: form.title,
         status: 'Menunggu',
         statusColor: '#22C55E',
@@ -128,14 +93,17 @@ export default function HelpScreen() {
         type: categories.find(c => c.key === form.category)?.label || form.category,
         priority: 'Rendah',
         distance: '0 km',
-        time: 'Baru saja',
+        time: new Date().toISOString(),
         likes: 0,
         activity: 'Baru',
         activityColor: '#BBF7D0',
         contact: form.contact,
-      } as HelpRequest
-    ]);
-    setShowOfferForm(false);
+        createdAt: new Date(),
+      });
+      setShowOfferForm(false);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   const getFilteredRequests = () => {
@@ -154,7 +122,7 @@ export default function HelpScreen() {
   return (
     <>
       <ScrollView contentContainerStyle={styles.container}>
-        <HelpHeader />
+        <HelpHeader helpStats={helpStats} />
         <HelpActions
           onPressRequest={() => setShowRequestForm(true)}
           onPressOffer={() => setShowOfferForm(true)}

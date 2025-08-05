@@ -1,7 +1,7 @@
 // File: app/help.tsx
 
-import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import { Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const helpStats = [
@@ -200,8 +200,8 @@ export default function HelpScreen() {
 
 const styles = StyleSheet.create({
   container: { backgroundColor: '#F9FAFB', paddingBottom: 20 },
-  headerBox: { backgroundColor: '#2563EB', padding: 18, borderRadius: 16, marginBottom: 18 },
-  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
+  headerBox: { backgroundColor: '#2563EB', padding: 18, borderRadius: 16, marginBottom: 18, paddingTop: 24,},
+  headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 16,  },
   backBtn: { backgroundColor: '#2563EB', padding: 8, borderRadius: 100, marginRight: 10 },
   addBtn: { backgroundColor: '#2563EB', padding: 8, borderRadius: 100, marginLeft: 10 },
   headerTitle: { color: '#fff', fontSize: 22, fontWeight: 'bold' },
