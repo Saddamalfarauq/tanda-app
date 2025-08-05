@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { AlertTriangle, HandHelping, MapPin, Volume2 } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -57,6 +58,7 @@ const menu = [
 ];
 
 export default function MainMenu() {
+  const router = useRouter();
   return (
     <View style={{ paddingHorizontal: 24, marginTop: 32}}>
       <Text style={{ fontWeight: "bold", fontSize: 18, color: "#22223B", marginBottom: 18 }}>
@@ -65,6 +67,7 @@ export default function MainMenu() {
       <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
         {menu.map((item, idx) => (
           <TouchableOpacity
+            onPress={() => router.push(`/${item.route}`)}
             key={item.label}
             style={{
               width: "48%",

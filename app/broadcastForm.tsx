@@ -57,7 +57,7 @@ const PRIORITIES = [
   { key: 'tinggi', color: '#ef4444', icon: <AlertTriangle color="#ef4444" size={20} />, label: 'Tinggi - Sangat Penting', desc: 'Darurat, harus dibaca sekarang' },
 ];
 
-export default function BroadcastForm({ navigation }: any) {
+export default function BroadcastForm({ navigation }: { navigation: any }) {
   const [type, setType] = useState('');
   const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');

@@ -447,6 +447,18 @@ const styles = StyleSheet.create({
   sectionBox: { backgroundColor: '#fff', borderRadius: 17, padding: 15, marginHorizontal: 18, marginBottom: 15, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, borderWidth: 1, borderColor: '#f1f5f9' },
   sectionLabel: { fontSize: 13.5, fontWeight: 'bold', color: '#1f2937', marginBottom: 10 },
 
+  pickerBox: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#d1d5db',
+  },
+  picker: {
+    height: 50,
+    width: '100%',
+    color: '#374151',
+  },
+
   // Radio grid (severity, people)
   grid1: { flexDirection: 'column', marginBottom: 0 },
   grid2: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
