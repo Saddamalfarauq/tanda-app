@@ -3,7 +3,7 @@ import type { ImagePickerAsset } from 'expo-image-picker';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { MapPin } from 'lucide-react-native';
+import { AlertTriangle, Ambulance, ArrowLeft, Flame, Home, Hospital, PersonStanding, ShieldAlert, Users } from 'lucide-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -33,10 +33,11 @@ export default function ReportScreen() {
   const [uploading, setUploading] = useState(false);
 
   // Progress Calculation
-  const requiredFields = [incidentType, severity, peopleAffected, description, reporterName, reporterRelation];
-  const progress = requiredFields.filter(Boolean).length + (image ? 1 : 0);
-  const progressText = `${progress}/8 Selesai`;
-  const progressPercent = Math.round((progress / 8) * 100);
+  // Pastikan ini hanya ada satu kali:
+const requiredFields = [incidentType, severity, peopleAffected, description, reporterName, reporterRelation];
+const progress = requiredFields.filter(Boolean).length + (image ? 1 : 0); // Hitung progress
+const progressText = `${progress}/8 Selesai`;
+const progressPercent = Math.round((progress / 8) * 100);
 
   // Image Picker
   const pickImage = async () => {
@@ -64,40 +65,43 @@ export default function ReportScreen() {
     }, 1000);
   };
 
-  // DATA PILIHAN
+  // Pilihan dengan Icon
   const severityOptions = [
     {
-      value: 'rendah', icon: '⚠️',
+      value: 'rendah',
+      Icon: AlertTriangle,
       bg: '#fef9c3', border: '#fde68a', color: '#b45309',
       title: 'Rendah - Tidak Mendesak',
       desc: 'Tidak ada bahaya langsung, bisa ditangani nanti',
     },
     {
-      value: 'sedang', icon: '🚨',
+      value: 'sedang',
+      Icon: ShieldAlert,
       bg: '#ffedd5', border: '#fdba74', color: '#ea580c',
       title: 'Sedang - Perlu Perhatian',
       desc: 'Ada potensi bahaya, perlu tindakan segera',
     },
     {
-      value: 'tinggi', icon: '🆘',
+      value: 'tinggi',
+      Icon: Home,
       bg: '#fee2e2', border: '#fecaca', color: '#dc2626',
       title: 'Tinggi - Darurat!',
       desc: 'Bahaya langsung, butuh bantuan sekarang juga',
     },
   ];
   const peopleOptions = [
-    { value: '1', icon: '👤', label: '1 Orang', desc: 'Hanya saya' },
-    { value: '2-5', icon: '👥', label: '2-5 Orang', desc: 'Keluarga kecil' },
-    { value: '6-20', icon: '👨‍👩‍👧‍👦', label: '6-20 Orang', desc: 'Kelompok/RT' },
-    { value: '20+', icon: '🏘️', label: '20+ Orang', desc: 'Komunitas besar' }
+    { value: '1', Icon: PersonStanding, label: '1 Orang', desc: 'Hanya saya' },
+    { value: '2-5', Icon: Users, label: '2-5 Orang', desc: 'Keluarga kecil' },
+    { value: '6-20', Icon: Users, label: '6-20 Orang', desc: 'Kelompok/RT' },
+    { value: '20+', Icon: Home, label: '20+ Orang', desc: 'Komunitas besar' }
   ];
   const helpOptions = [
-    { state: needAmbulance, set: setNeedAmbulance, icon: '🚑', label: 'Ambulans' },
-    { state: needFire, set: setNeedFire, icon: '🚒', label: 'Pemadam Kebakaran' },
-    { state: needPolice, set: setNeedPolice, icon: '👮', label: 'Polisi' },
-    { state: needSAR, set: setNeedSAR, icon: '⛑️', label: 'Tim SAR' },
-    { state: needMedical, set: setNeedMedical, icon: '🏥', label: 'Tim Medis' },
-    { state: needLogistics, set: setNeedLogistics, icon: '📦', label: 'Logistik' },
+    { state: needAmbulance, set: setNeedAmbulance, Icon: Ambulance, label: 'Ambulans' },
+    { state: needFire, set: setNeedFire, Icon: Flame, label: 'Pemadam Kebakaran' },
+    { state: needPolice, set: setNeedPolice, Icon: ShieldAlert, label: 'Polisi' },
+    { state: needSAR, set: setNeedSAR, Icon: Home, label: 'Tim SAR' },
+    { state: needMedical, set: setNeedMedical, Icon: Hospital, label: 'Tim Medis' },
+    { state: needLogistics, set: setNeedLogistics, Icon: Home, label: 'Logistik' },
   ];
 
   return (
@@ -110,8 +114,8 @@ export default function ReportScreen() {
         style={styles.headerGradient}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-          <TouchableOpacity style={styles.headerBackBtn}>
-            <MapPin color="#fff" size={20} />
+          <TouchableOpacity style={styles.headerBackBtn} onPress={() => router.back()}>
+            <ArrowLeft color="#fff" size={22} />
           </TouchableOpacity>
           <View style={{ flex: 1 }}>
             <Text style={styles.headerTitle}>Laporkan Kejadian</Text>
@@ -126,6 +130,7 @@ export default function ReportScreen() {
           </View>
           <View style={styles.progressBarBg}>
             <View style={[styles.progressBar, { width: `${progressPercent}%` }]} />
+
           </View>
         </View>
       </LinearGradient>
@@ -133,7 +138,7 @@ export default function ReportScreen() {
       {/* Lokasi Section */}
       <View style={styles.locationBox}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-          <View style={styles.locationIconWrap}><MapPin color="#fff" size={18} /></View>
+          <View style={styles.locationIconWrap}></View>
           <View style={{ flex: 1 }}>
             <Text style={styles.locationLabel}>Lokasi Kejadian</Text>
             <Text style={styles.locationDesc}>Jl. Sudirman No. 123, Jakarta Selatan</Text>
@@ -163,16 +168,16 @@ export default function ReportScreen() {
             style={styles.picker}
           >
             <Picker.Item label="Pilih jenis kejadian yang terjadi..." value="" />
-            <Picker.Item label="🌊 Banjir" value="banjir" />
-            <Picker.Item label="🔥 Kebakaran" value="kebakaran" />
-            <Picker.Item label="🏔️ Tanah Longsor" value="longsor" />
-            <Picker.Item label="⚡ Gempa Bumi" value="gempa" />
-            <Picker.Item label="🌪️ Angin Kencang/Puting Beliung" value="angin" />
-            <Picker.Item label="🚨 Kecelakaan Lalu Lintas" value="kecelakaan" />
-            <Picker.Item label="⚠️ Tindak Kriminal" value="kriminal" />
-            <Picker.Item label="🏥 Darurat Medis" value="medis" />
-            <Picker.Item label="🏗️ Kerusakan Infrastruktur" value="infrastruktur" />
-            <Picker.Item label="❓ Lainnya" value="lainnya" />
+            <Picker.Item label="Banjir" value="banjir" />
+            <Picker.Item label="Kebakaran" value="kebakaran" />
+            <Picker.Item label="Tanah Longsor" value="longsor" />
+            <Picker.Item label="Gempa Bumi" value="gempa" />
+            <Picker.Item label="Angin Kencang/Puting Beliung" value="angin" />
+            <Picker.Item label="Kecelakaan Lalu Lintas" value="kecelakaan" />
+            <Picker.Item label="Tindak Kriminal" value="kriminal" />
+            <Picker.Item label="Darurat Medis" value="medis" />
+            <Picker.Item label="Kerusakan Infrastruktur" value="infrastruktur" />
+            <Picker.Item label="Lainnya" value="lainnya" />
           </Picker>
         </View>
       </View>
@@ -196,7 +201,7 @@ export default function ReportScreen() {
               activeOpacity={0.84}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: 22, marginRight: 13 }}>{opt.icon}</Text>
+                <opt.Icon color={opt.color} size={27} style={{ marginRight: 13 }} />
                 <View>
                   <Text style={{ color: opt.color, fontWeight: 'bold', fontSize: 15 }}>{opt.title}</Text>
                   <Text style={{ fontSize: 12, color: opt.color, opacity: 0.75 }}>{opt.desc}</Text>
@@ -221,7 +226,7 @@ export default function ReportScreen() {
               onPress={() => setPeopleAffected(opt.value)}
               activeOpacity={0.86}
             >
-              <Text style={{ fontSize: 22, marginBottom: 3 }}>{opt.icon}</Text>
+              <opt.Icon color="#2563eb" size={23} style={{ marginBottom: 3 }} />
               <Text style={{ fontWeight: 'bold', fontSize: 14, color: '#1f2937' }}>{opt.label}</Text>
               <Text style={{ fontSize: 12, color: '#6b7280' }}>{opt.desc}</Text>
             </TouchableOpacity>
@@ -282,8 +287,18 @@ export default function ReportScreen() {
               ]}
               onPress={() => opt.set(!opt.state)}
             >
-              <Text style={{ fontSize: 21, marginRight: 9 }}>{opt.icon}</Text>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#1e293b' }}>{opt.label}</Text>
+              <opt.Icon color="#dc2626" size={21} style={{ marginRight: 9 }} />
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: 'bold',
+                  color: '#1e293b',
+                  flexShrink: 1,
+                }}
+                numberOfLines={2}
+              >
+                {opt.label}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -447,18 +462,6 @@ const styles = StyleSheet.create({
   sectionBox: { backgroundColor: '#fff', borderRadius: 17, padding: 15, marginHorizontal: 18, marginBottom: 15, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, borderWidth: 1, borderColor: '#f1f5f9' },
   sectionLabel: { fontSize: 13.5, fontWeight: 'bold', color: '#1f2937', marginBottom: 10 },
 
-  pickerBox: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#d1d5db',
-  },
-  picker: {
-    height: 50,
-    width: '100%',
-    color: '#374151',
-  },
-
   // Radio grid (severity, people)
   grid1: { flexDirection: 'column', marginBottom: 0 },
   grid2: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
@@ -474,7 +477,19 @@ const styles = StyleSheet.create({
   inputCasualty: { backgroundColor: '#fff', borderRadius: 10, borderWidth: 1, borderColor: '#d1d5db', paddingHorizontal: 9, paddingVertical: 7, fontSize: 13, color: '#374151', marginBottom: 3 },
 
   // Help (checkboxes)
-  helpBtn: { width: '48%', backgroundColor: '#fff', borderRadius: 15, padding: 12, borderWidth: 2, borderColor: '#e5e7eb', alignItems: 'center', flexDirection: 'row', marginBottom: 7 },
+helpBtn: {
+  width: '48%',
+  maxWidth: '48%',
+  flexBasis: '48%',
+  backgroundColor: '#fff',
+  borderRadius: 15,
+  padding: 12,
+  borderWidth: 2,
+  borderColor: '#e5e7eb',
+  alignItems: 'center',
+  flexDirection: 'row',
+  marginBottom: 7,
+},
 
   // Deskripsi
   inputDesc: { backgroundColor: '#fff', borderRadius: 13, borderWidth: 1.5, borderColor: '#e5e7eb', padding: 12, minHeight: 86, fontSize: 14, color: '#1e293b', marginBottom: 4 },
@@ -504,5 +519,26 @@ const styles = StyleSheet.create({
   submitBtn: { marginHorizontal: 18, marginTop: 6, borderRadius: 16, overflow: 'hidden', shadowColor: '#dc2626', shadowOpacity: 0.09, shadowRadius: 8, elevation: 2, marginBottom: 6 },
   submitBtnDisabled: { opacity: 0.6 },
   submitGradient: { width: '100%', paddingVertical: 15, alignItems: 'center', borderRadius: 16 },
-  submitInfo: { fontSize: 12, color: '#64748b', textAlign: 'center', marginTop: 7 }
+  submitInfo: { fontSize: 12, color: '#64748b', textAlign: 'center', marginTop: 7 },
+
+  pickerBox: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    marginTop: 2,
+    marginBottom: 6,
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+
+  picker: {
+    width: '100%',
+    height: 55,
+    color: '#22223B',
+    fontSize: 15,
+    backgroundColor: 'transparent',
+  }
 });
